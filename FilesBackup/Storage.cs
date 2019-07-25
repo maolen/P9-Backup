@@ -1,12 +1,12 @@
 ﻿using System;
-using static System.Console;
+using System.Text;
 
-namespace Backup
+namespace FilesBackup
 {
     public abstract class Storage
     {
         private double _memoryCapacity;
-        private double _freeMemory;
+        private double _freeStorage;
         private double _readSpeed;
         private double _writeSpeed;
 
@@ -23,7 +23,7 @@ namespace Backup
         /// <summary>
         /// Объём общей памяти в мегабайтах.
         /// </summary>
-        public double MemoryCapacity
+        public double TotalStorage
         {
             get
             {
@@ -49,29 +49,29 @@ namespace Backup
         /// <summary>
         /// Объём свободной памяти в мегабайтах.
         /// </summary>
-        public double FreeMemory
+        public double FreeStorage
         {
             get
             {
-                return _freeMemory;
+                return _freeStorage;
             }
             protected set
             {
                 if (value < 0)
                 {
-                    _freeMemory = Math.Abs(value);
+                    _freeStorage = Math.Abs(value);
                 }
                 else if (value == 0)
                 {
                     throw new ArgumentException("Объём свободной памяти не может быть равен нулю!");
                 }
-                else if (value > MemoryCapacity)
+                else if (value > TotalStorage)
                 {
                     throw new ArgumentOutOfRangeException("О");
                 }
                 else
                 {
-                    _freeMemory = value;
+                    _freeStorage = value;
                 }
             }
         }
@@ -130,27 +130,25 @@ namespace Backup
 
 
         /// <summary>
-        /// Показывает объём общей памяти в мегабайтах.
-        /// </summary>
-        /// <returns></returns>
-        protected abstract double GetMemoryCapacity();
-
-        /// <summary>
-        /// Показывает объём свободной памяти в мегабайтах.
-        /// </summary>
-        /// <returns></returns>
-        protected abstract double GetFreeMemory();
-
-        /// <summary>
         /// Получение информации об устройстве.
         /// </summary>
         /// <returns></returns>
-        protected abstract string GetDeficeInfo();
+        public virtual string GetDeficeInfo()
+        {
+            var deviceInfo = new StringBuilder();
+            deviceInfo.Append($"\nНазвание устройства: {Name}");
+            deviceInfo.Append($"\nМодель устройства: {Model}");
+            deviceInfo.Append($"\nОбъём общей памяти: {TotalStorage}");
+            deviceInfo.Append($"\nОбъём свободной памяти: {FreeStorage}");
+            deviceInfo.Append($"\nСкорость записи данных: {ReadSpeed}");
+            deviceInfo.Append($"\nСкорость чтения данных: {WriteSpeed}");
+            return deviceInfo.ToString();
+        }
 
         /// <summary>
         /// Копирование данных на устройство.
         /// </summary>
         /// <returns></returns>
-        protected abstract void CopyData();
+        public abstract void CopyData();
     }
 }
